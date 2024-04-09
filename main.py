@@ -27,6 +27,13 @@ while True:
 
   if keys[pygame.K_UP] or keys[pygame.K_w]:
     player.y -= 2
+  if keys[pygame.K_DOWN] or keys[pygame.K_s]:
+    player.y += 2
+  if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+    player.x += 2
+  if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+    player.x -= 2
+  
 
   for event in pygame.event.get():
     if event.type == QUIT:
