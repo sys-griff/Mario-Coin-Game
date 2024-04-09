@@ -1,1 +1,1 @@
-# Mario-Coin-Game
+# This is a cool game :)
