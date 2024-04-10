@@ -33,6 +33,8 @@ while True:
     player.x += 2
   if keys[pygame.K_LEFT] or keys[pygame.K_a]:
     player.x -= 2
+
+    # Hello World
   
 
   for event in pygame.event.get():
