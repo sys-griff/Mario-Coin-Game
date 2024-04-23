@@ -6,20 +6,32 @@ pygame.init()
 
 screen = pygame.display.set_mode((1000, 800))
 
-FONT = pygame.font.Font("Pixel Font.ttf", 80)
+FONT1 = pygame.font.Font("Pixel Font.ttf", 80)
+FONT2 = pygame.font.Font("Pixel Font.ttf", 200)
 
-score = FONT.render("0", True, "black")
-score_rect = score.get_rect(center=(500, 100))
+score = FONT1.render("0", True, "black")
+score_rect = score.get_rect(center = (500, 100))
+
+levelup_text = FONT2.render("LEVEL UP", True, "black")
+levelup_text_rect = score.get_rect(center = (185, 400))
+
+gameover_text = FONT2.render("GAME OVER", True, "black")
+gameover_text_rect = score.get_rect(center = (185, 400))
+
+win_text = FONT2.render("YOU WIN", True, "black")
+win_text_rect = score.get_rect(center = (185, 400))
 
 window_rect = screen.get_rect()
 
-game = True
-
+pause = 2500
+level_up = False
+game_over = False
+level = 1
 lives = 3
-
 enemy_speed = 1
-
 coins = 0
+
+screen_color = (255, 70, 231)
 
 screen.fill((255, 70, 231))
 
@@ -44,39 +56,34 @@ lives3 = livesimg.get_rect(center = (350, 100))
 lives2 = livesimg.get_rect(center = (250, 100))
 lives1 = livesimg.get_rect(center = (150, 100))
 
-while game == True:
+while True:
 
   clock.tick(240)
 
   keys = pygame.key.get_pressed()
 
-  if keys[pygame.K_UP] and player.y > 0:
-      player.y -= 2
-  if keys[pygame.K_DOWN] and player.y < 740:
-      player.y += 2
-  if keys[pygame.K_RIGHT] and player.x < 1000 - 55:
-      player.x += 2
-  if keys[pygame.K_LEFT] and player.x > 0:
-      player.x -= 2
+  enemy_speed = level
 
-  enemy.x -= enemy_speed
+  if level_up == False and game_over == False:
+    if keys[pygame.K_UP] and player.y > 0:
+        player.y -= 2
+    if keys[pygame.K_DOWN] and player.y < 740:
+        player.y += 2
+    if keys[pygame.K_RIGHT] and player.x < 1000 - 55:
+        player.x += 2
+    if keys[pygame.K_LEFT] and player.x > 0:
+        player.x -= 2
+    
+    enemy.x -= enemy_speed
 
   if enemy.x < 0:
     enemy = enemyimg.get_rect(center = (1000, random.randint(50, 750)))
-    if enemy_speed < 6:
-       enemy_speed += 1
   
   enemy_collide = player.colliderect(enemy)
 
   if enemy_collide:
     lives -= 1
     enemy = enemyimg.get_rect(center = (1000, random.randint(50, 750)))
-    if lives == 2:
-      lives3 = livesimg.get_rect(center = (5000, 5000))
-    if lives == 1:
-      lives2 = livesimg.get_rect(center = (5000, 5000))
-    if lives == 0:
-      lives1 = livesimg.get_rect(center = (5000, 5000))
 
   for event in pygame.event.get():
     if event.type == QUIT:
@@ -89,20 +96,44 @@ while game == True:
     coin = coinimg.get_rect(center = (random.randint(50, 950), random.randint(50, 750)))
     coins += 1
 
-  screen.fill((255, 70, 231))
+  if coins == 10 * level:
+    enemy = enemyimg.get_rect(center = (1000, random.randint(50, 750)))
+    level_up = True
+    coins = 0
+    screen_color = (random.randint(0, 250), random.randint(0, 250), random.randint(0, 250))
+    level += 1
+  
+  screen.fill(screen_color)
 
-  score = FONT.render(f"{coins}", True, "black")
+  score = FONT1.render(f"{coins}", True, "black")
 
   screen.blit(score, score_rect)
   
   screen.blit(coinimg, coin)
   screen.blit(playerimg, player)
   screen.blit(enemyimg, enemy)
-  screen.blit(livesimg, lives3)
-  screen.blit(livesimg, lives2)
-  screen.blit(livesimg, lives1)
+  if lives == 3:
+    screen.blit(livesimg, lives3)
+  if lives >= 2:
+    screen.blit(livesimg, lives2)
+  if lives >= 1:
+    screen.blit(livesimg, lives1)
+
+  if level == 5:
+    screen.blit(win_text, win_text_rect)
 
   if lives == 0:
-     game = False
+    screen.blit(gameover_text, gameover_text_rect)
+    game_over = True
 
+  if level_up == True:
+    lives = 3
+    pause -= 10.4166
+    if pause > 0:
+      screen.blit(levelup_text, levelup_text_rect)
+    else:
+      level_up = False
+      pause = 2500
   pygame.display.update()
+
+
